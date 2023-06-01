@@ -1,0 +1,300 @@
+<!-- <mat-toolbar color="primary">
+  <img src="../assets/careers-ico.jpg" alt="Logo" class="logo">
+  <span class="spacer"></span>
+  <button mat-button color="accent" (click)="offres()">offers</button>
+  <button mat-button color="accent" (click)="profile()">profile</button>
+  <button mat-button color="accent" (click)="Applications()">Applications</button>
+  <button mat-button color="accent" (click)="Logout()">Logout</button> 
+</mat-toolbar>
+<h1 class="welcome-message">Welcome {{ username }}!</h1>
+
+
+
+<main>
+  <div *ngIf="showOffers" >
+    <ul>
+      <li *ngFor="let offer of pagedOffers" class="offer-grid">
+        <ng-container *ngIf="!offer.editMode; else editModeTemplate">
+          <div  >
+            <div class="position">Position: {{ offer.position }}<br></div>
+            Address: {{ offer.address }}<br>
+            Description: {{ offer.description }}<br>
+            Required Experience: {{ offer.requiredexperience }}<br>
+            Expires At: {{ offer.expiresAt }}<br>
+            Published At: {{ offer.publishedAt }}<br>
+            Salary Range: {{ offer.salaryMin }} - {{ offer.salaryMax }}<br>
+            Status: {{ offer.status }}<br>
+            Contract: {{ offer.contract }}<br>
+            Positions: {{ offer.positions }}<br>
+            Applications: {{ offer.applications.length }}<br>
+            <button mat-button color="accent" (click)="clusterOffer(offer)">Cluster</button>
+            <button mat-button color="accent" (click)="offer.editMode = true">Modify</button>
+            <button mat-button color="accent" (click)="deleteOffer(offer.id)">Delete</button>
+          </div>
+        </ng-container>
+            
+        
+ 
+
+        <ng-template #editModeTemplate>
+          <div  >
+            Position: <input type="text" [(ngModel)]="offer.position"><br>
+            Address: <input type="text" [(ngModel)]="offer.address"><br>
+            Description: <input type="text" [(ngModel)]="offer.description"><br>
+            Required Experience: <input type="number" [(ngModel)]="offer.requiredexperience"><br>
+            Expires At: <input type="date" [(ngModel)]="offer.expiresAt"><br>
+            Published At: <input type="text" [(ngModel)]="offer.publishedAt" readonly><br>
+            Salary Range: <input type="number" [(ngModel)]="offer.salaryMin"> - <input type="number" [(ngModel)]="offer.salaryMax"><br>
+            Status: <input type="text" [(ngModel)]="offer.status" [readonly]="offer.editMode || !offer.isNew"><br>
+            Positions: <input type="number" [(ngModel)]="offer.positions"><br>
+
+            Contract:
+            <select [(ngModel)]="offer.contract">
+              <option value="CDI">CDI</option>
+              <option value="CDD">CDD</option>
+              <option value="CTT">CTT</option>
+            </select>
+
+
+
+            Applications: {{ offer.applications.length }}<br>
+            
+            <button mat-button color="accent" (click)="saveOffer(offer)">Save</button>
+            <button mat-button color="accent" (click)="cancelEdit(offer)">Cancel</button>
+          </div>
+        </ng-template>
+      </li>
+    </ul>
+    </div>
+     <div *ngIf="showAddOfferForm">
+    
+    <div class="offer-grid-form" >
+      Position: <input type="text" [(ngModel)]="newOffer.position"><br>
+      Address: <input type="text" [(ngModel)]="newOffer.address"><br>
+      Description: <input type="text" [(ngModel)]="newOffer.description"><br>
+      Required Experience: <input type="number" [(ngModel)]="newOffer.requiredexperience"><br>
+      Expires At: <input type="date" [(ngModel)]="newOffer.expiresAt"><br>
+      Published At{{ newOffer.publishedAt | date : 'meduim'}} <br>
+      Salary Range: <input type="number" [(ngModel)]="newOffer.salaryMin"> - <input type="number" [(ngModel)]="newOffer.salaryMax"><br>
+      Positions: <input type="number" [(ngModel)]="newOffer.positions"><br>
+      Contract:
+    <select [(ngModel)]="newOffer.contract">
+      <option value="CDI">CDI</option>
+      <option value="CDD">CDD</option>
+      <option value="CTT">CTT</option>
+    </select>
+      <button mat-button color="accent" (click)="adddOffer(newOffer)">Add</button>
+      <button mat-button color="accent"(click)="cancelAddOffer()" >Cancel</button>
+    </div>
+  </div>
+
+
+
+
+  <div *ngIf="showProfileForm" class="profile-container">
+    <h3 class="profile-heading">Company Profile</h3>
+    <div class="profile-info">
+      <label>Description:</label>
+      <textarea [disabled]="!profileEditMode" [(ngModel)]="companyProfile.description" class="profile-textarea"></textarea>
+    </div>
+    <div>
+      <label>Address:</label>
+      <input type="text" [disabled]="!profileEditMode" [(ngModel)]="companyProfile.address" class="profile-input">
+    </div>
+    <div>
+      <label>Activity:</label>
+      <input type="text" [disabled]="!profileEditMode" [(ngModel)]="companyProfile.activity" class="profile-input">
+    </div>
+    <div>
+      <label>Photo:</label>
+      <div class="profile-image-container">
+        <div *ngIf="existingImage" class="profile-image-wrapper">
+          <img [src]="existingImage" class="profile-image">
+        </div>
+        <input *ngIf="profileEditMode" type="file" (change)="onFileSelected($event)" accept="image/*" class="profile-input">
+      </div>
+    </div>
+ 
+    
+    <div class="profile-buttons">
+      <button mat-button color="accent" (click)="editProfile()" class="edit-button">Edit</button>
+      <button mat-button color="accent" (click)="saveProfile()" *ngIf="profileEditMode" class="save-button">Save</button>
+      <button mat-button color="accent" (click)="canceelEdit()" *ngIf="profileEditMode" class="cancel-button">Cancel</button>
+    </div>
+  </div>
+  
+  
+  
+
+
+
+  <div *ngIf="showApplicationsList">
+    <mat-accordion>
+      <h3 class="applications-heading">Applications:</h3>
+  
+      <mat-expansion-panel *ngFor="let user of applications">
+        <mat-expansion-panel-header>
+        User:  {{ user.username }}
+        </mat-expansion-panel-header>
+        <div class="user-details">
+          <div class="user-email">Email: {{ user.email }}</div>
+          <div class="user-phone">FirstName:  {{ user.firstname }}</div>
+          <div class="user-experience">LastName: {{ user.lastname }}</div>
+          <button mat-button color="primary"  (click)="view()">View Profile</button>
+          
+          <button mat-button color="primary" [disabled]="user.status === 'Rejected'" (click)="acceptUser()">Accept</button>
+          <button mat-button color="warn" [disabled]="user.status === 'Rejected'" (click)="rejectUser()">Reject</button>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+  <button mat-button color="accent" class="add-offer-button" (click)="addOffer()">+</button>
+  <router-outlet></router-outlet>
+</main> -->
+<mat-toolbar color="primary" class="navbar">
+  <img src="../assets/careers-ico.jpg" alt="Logo" class="logo">
+  <span class="spacer"></span>
+  <button mat-button color="login" (click)="offres()" class="nav-button">offers</button>
+  <button mat-button color="login" (click)="profile()" class="nav-button">profile</button>
+  <button mat-button color="login" (click)="Applications()" class="nav-button">Applications</button>
+  <button mat-button color="accent" (click)="Logout()" class="nav-button">Logout</button> 
+</mat-toolbar>
+
+
+
+<main class="container">
+  <div *ngIf="showOffers" >
+    <ul class="offer-list">
+      <li *ngFor="let offer of pagedOffers" class="offer-grid">
+        <ng-container *ngIf="!offer.editMode; else editModeTemplate">
+          <div class="offer-details">
+            <div class="position">Position: {{ offer.position }}</div>
+            Address: {{ offer.address }}<br>
+            Description: {{ offer.description }}<br>
+            Required Experience: {{ offer.requiredexperience }}<br>
+            Expires At: {{ offer.expiresAt }}<br>
+            Published At: {{ offer.publishedAt }}<br>
+            Salary Range: {{ offer.salaryMin }} - {{ offer.salaryMax }}<br>
+            Status: {{ offer.status }}<br>
+            Contract: {{ offer.contract }}<br>
+            Positions: {{ offer.positions }}<br>
+            Applications: {{ offer.applications.length }}<br>
+            <button mat-button color="accent" (click)="clusterOffer(offer)">Cluster</button>
+            <button mat-button color="accent" (click)="offer.editMode = true">Modify</button>
+            <button mat-button color="accent" (click)="deleteOffer(offer.id)">Delete</button>
+          </div>
+        </ng-container>
+        
+        <ng-template #editModeTemplate>
+          <div class="offer-details">
+            Position: <input type="text" [(ngModel)]="offer.position"><br>
+            Address: <input type="text" [(ngModel)]="offer.address"><br>
+            Description: <input type="text" [(ngModel)]="offer.description"><br>
+            Required Experience: <input type="number" [(ngModel)]="offer.requiredexperience"><br>
+            Expires At: <input type="date" [(ngModel)]="offer.expiresAt"><br>
+            Published At: <input type="text" [(ngModel)]="offer.publishedAt" readonly><br>
+            Salary Range: <input type="number" [(ngModel)]="offer.salaryMin"> - <input type="number" [(ngModel)]="offer.salaryMax"><br>
+            Status: <input type="text" [(ngModel)]="offer.status" [readonly]="offer.editMode || !offer.isNew"><br>
+            Positions: <input type="number" [(ngModel)]="offer.positions"><br>
+            Contract:
+            <select [(ngModel)]="offer.contract">
+              <option value="CDI">CDI</option>
+              <option value="CDD">CDD</option>
+              <option value="CTT">CTT</option>
+            </select>
+            Applications: {{ offer.applications.length }}<br>
+            <button mat-button color="accent" (click)="saveOffer(offer)">Save</button>
+            <button mat-button color="accent" (click)="cancelEdit(offer)">Cancel</button>
+          </div>
+        </ng-template>
+      </li>
+    </ul>
+  </div>
+  
+  <div *ngIf="showAddOfferForm">
+    <!-- Form for adding a new offer -->
+    <div class="offer-grid-form">
+      Position: <input type="text" [(ngModel)]="newOffer.position"><br>
+      Address: <input type="text" [(ngModel)]="newOffer.address"><br>
+      Description: <input type="text" [(ngModel)]="newOffer.description"><br>
+      Required Experience: <input type="number" [(ngModel)]="newOffer.requiredexperience"><br>
+      Expires At: <input type="date" [(ngModel)]="newOffer.expiresAt"><br>
+      Published At: {{ newOffer.publishedAt | date:'medium' }}<br>
+      Salary Range: <input type="number" [(ngModel)]="newOffer.salaryMin"> - <input type="number" [(ngModel)]="newOffer.salaryMax"><br>
+      Positions: <input type="number" [(ngModel)]="newOffer.positions"><br>
+      Contract:
+      <select [(ngModel)]="newOffer.contract">
+        <option value="CDI">CDI</option>
+        <option value="CDD">CDD</option>
+        <option value="CTT">CTT</option>
+      </select>
+      <button mat-button color="accent" (click)="adddOffer(newOffer)">Add</button>
+      <button mat-button color="accent" (click)="cancelAddOffer()">Cancel</button>
+    </div>
+  </div>
+
+  <div *ngIf="showProfileForm" class="profile-container">
+    <h3 class="profile-heading">Company Profile</h3>
+    <div class="profile-info">
+      <label>Description:</label>
+      <textarea [disabled]="!profileEditMode" [(ngModel)]="companyProfile.description" class="profile-textarea"></textarea>
+    </div>
+    <div>
+      <label>Address:</label>
+      <input type="text" [disabled]="!profileEditMode" [(ngModel)]="companyProfile.address" class="profile-input">
+    </div>
+    <div>
+      <label>Activity:</label>
+      <input type="text" [disabled]="!profileEditMode" [(ngModel)]="companyProfile.activity" class="profile-input">
+    </div>
+    <div>
+      <label>Photo:</label>
+      <div class="profile-image-container">
+        <div *ngIf="existingImage" class="profile-image-wrapper">
+          <img [src]="existingImage" class="profile-image">
+        </div>
+        <input *ngIf="profileEditMode" type="file" (change)="onFileSelected($event)" accept="image/*" class="profile-input">
+      </div>
+    </div>
+    <div class="profile-buttons">
+      <button mat-button color="accent" (click)="editProfile()" class="edit-button">Edit</button>
+      <button mat-button color="accent" (click)="saveProfile()" *ngIf="profileEditMode" class="save-button">Save</button>
+      <button mat-button color="accent" (click)="canceelEdit()" *ngIf="profileEditMode" class="cancel-button">Cancel</button>
+    </div>
+  </div>
+  
+  <div *ngIf="showApplicationsList">
+    <mat-accordion>
+      <h3 class="applications-heading">Applications:</h3>
+  
+      <mat-expansion-panel *ngFor="let user of applications">
+        <mat-expansion-panel-header>
+          User: {{ user.username }}
+        </mat-expansion-panel-header>
+        <div class="user-details">
+          <div class="user-email">Email: {{ user.email }}</div>
+          <div class="user-phone">FirstName: {{ user.firstname }}</div>
+          <div class="user-experience">LastName: {{ user.lastname }}</div>
+          <button mat-button color="primary" (click)="view()">View Profile</button>
+          <button mat-button color="primary" [disabled]="user.status === 'Rejected'" (click)="acceptUser()">Accept</button>
+          <button mat-button color="warn" [disabled]="user.status === 'Rejected'" (click)="rejectUser()">Reject</button>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+  
+  <button mat-button color="accent" class="add-offer-button" (click)="addOffer()">+</button>
+  <router-outlet></router-outlet>
+</main>
+

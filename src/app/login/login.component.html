@@ -1,0 +1,32 @@
+<mat-toolbar color="primary" class="navbar">
+  <img src="../assets/careers-ico.jpg" alt="Logo" class="logo">
+  <span class="spacer"></span>
+ 
+  <button mat-button color="login" (click)="Home()" class="nav-button">Home</button>
+  <button mat-button color="login" (click)="Register()" class="nav-button">Register</button>
+  <button mat-button color="login" (click)="Contact()" class="nav-button">Contact</button>
+  
+</mat-toolbar>
+
+<main class="container">
+  <div class="login-container">
+    <h2 class="login-title">Login</h2>
+    <form class="login-form" (submit)="onSubmit()">
+      <div class="form-group">
+        <label for="username" class="form-label">UserEmail / CompanyName:</label>
+        <input type="text" id="username" class="form-control" [(ngModel)]="username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" id="password" class="form-control" [(ngModel)]="password" name="password" required>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Login</button>
+      </div>
+    </form>
+    
+    <!-- Display the login type message -->
+    <p *ngIf="loggedInAs" class="logged-in-message">Logged in as: {{ loggedInAs }}</p>
+  </div>
+  <router-outlet></router-outlet>
+</main>
